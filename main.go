@@ -17,10 +17,10 @@ func main() {
 	var hours string = "72"
 
 	// Retrieve upcoming passes
-	contact_api(lat, long, minElevation, hours)
+	contact_satt_api(lat, long, minElevation, hours)
 }
 
-func contact_api(lat, long, minElevation, hours string) string {
+func contact_satt_api(lat, long, minElevation, hours string) string {
 	// Contact API
 	response, err := http.Get("https://api.g7vrd.co.uk/v1/satellite-passes/25544/" + lat + "/" + long + ".json?minelevation=" + minElevation + "&hours=" + hours + "")
 	if err != nil {
@@ -40,10 +40,11 @@ func contact_api(lat, long, minElevation, hours string) string {
 		panic(err)
 	}
 
-	// Use type assertion to loop over []interface{} and retrieve the value
+	// Use type assertion to loop over []interface{} and retrieve the nested map
 	for _, pass := range m["passes"].([]interface{}) {
-		fmt.Println(pass)
+		// Second type assertion to retrieve values from nested map
+		passData := pass.(map[string]interface{})
+		fmt.Println(passData["start"])
 	}
-
 	return (string(responseData))
 }
